@@ -10,6 +10,7 @@ const app = express();
 // });
 // app.listen(3000);
 
+app.use(express.json());
 app.use("/api", carsRouter);
 
 // ф, которая будет подключаться к бд и запускать сервер
