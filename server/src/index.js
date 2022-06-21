@@ -14,6 +14,7 @@ app.use(express.json());
 app.use("/api", carsRouter);
 
 // ф, которая будет подключаться к бд и запускать сервер
+// добавить обработку ошибок ??
 const start = async () => {
   try {
     await mongoose.connect(MONGO_CONNECTION_STRING);
