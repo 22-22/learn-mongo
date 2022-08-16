@@ -2,10 +2,12 @@ const Car = require("./cars.model");
 const CarService = require("./cars.service");
 class CarController {
   // добавить next и обработку ошибок
+  // async getAllCars(req, res, next) {
   async getAllCars(req, res) {
     try {
       const cars = await CarService.getAllCars();;
       res.json(cars);
+      // next();
     } catch (err) {
       console.log(err);
     }
@@ -65,6 +67,9 @@ class CarController {
         },
         startFuelLevel,
         startMileage,
+        location: {
+          coordinates: req.body?.location?.coordinates
+        },
         bookingsHistory,
         finishFuelLevel,
         finishMileage,
@@ -75,10 +80,28 @@ class CarController {
       console.log(err);
     }
   }
-  async updateCarStatusInService(req, res) {
+  async updateCarStatus(req, res) {
     try {
-      const carsUpdated = await CarService.updateCarStatusInService();
+      const carsUpdated = await CarService.updateCarStatus();
       res.json(carsUpdated);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  async updateCarCoordinates(req, res) {
+    try {
+      const carsUpdated = await CarService.updateCarCoordinates();
+      console.log(carsUpdated);
+      res.json(carsUpdated);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  async deleteCar(req, res) {
+    try {
+      const { vin } = req.query;
+      const result = await CarService.deleteCar(vin);
+      res.json(result);
     } catch (err) {
       console.log(err);
     }

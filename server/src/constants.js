@@ -6,6 +6,12 @@ const Statuses = {
     unavailable: "unavailable"
 }
 
+const prodDateToCompare = new Date(2017, 00, 01);
+const prodDateToCompareMilisec = prodDateToCompare.getTime();
+const milesToCompare = 100000;
+
 module.exports = {
-    Statuses
+    Statuses,
+    prodDateToCompareMilisec,
+    milesToCompare
 }

@@ -35,8 +35,15 @@ const carSchema = new Schema({
   currentRun: currentRunSchema,
   startFuelLevel: Number,
   startMileage: Number,
-  // TODO
-  // location: GeoJSON
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"]
+    },
+    coordinates: {
+      type: [Number]
+    }
+  },
   bookingsHistory: [currentRunSchema],
   finishFuelLevel: Number,
   finishMileage: Number,
