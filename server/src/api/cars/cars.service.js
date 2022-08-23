@@ -1,14 +1,20 @@
 const Car = require("./cars.model");
-const { Statuses, prodDateToCompareMilisec, milesToCompare } = require("../../constants");
+const {
+  Statuses,
+  prodDateToCompareMilisec,
+  milesToCompare,
+  fuelLevelToCompare,
+  coordToUpdate
+} = require("../../constants");
 
 class CarService {
   async getAllCars() {
     return await Car.find({});
   }
-  async getCarsInUseByFuel(fuelLevel) {
+  async getCarsInUseByFuel() {
     const cars = await Car.find({
       status: Statuses.inUse,
-      fuelLevel: { $lt: fuelLevel },
+      fuelLevel: { $lt: fuelLevelToCompare },
     });
     return cars;
   }
@@ -17,12 +23,9 @@ class CarService {
       status: Statuses.reserved,
       "currentRun.driver.bankCard": { $ne: null },
     });
-    return cars;
+    return cars.map((car) => Car.returnReservedCarsWithUnauthDriverCard(car))
   }
   async addCar(car) {
-    // await Car.create(car, function (err, car) {
-    //   console.log(err, car);
-    // });
     return await Car.create(car);
   }
   async updateCarStatus() {
@@ -37,16 +40,21 @@ class CarService {
     return result.modifiedCount;
   }
   async updateCarCoordinates() {
-    const result = await Car.updateMany({
-      "bookingHistory.2": {"$exists": true}
+    const cars = await Car.find({
+      "bookingsHistory.2": { "$exists": true },
+      status: { $nin: [Statuses.inUse, Statuses.reserved] }
     });
-    console.log(result);
-    console.log(result.modifiedCount);
-    return result.modifiedCount;
+    const updatedCars = await Promise.all(cars.map(async (car) => await Car.updateOne({
+      _id: car.id
+    }, {
+      "location.coordinates": coordToUpdate
+    })
+    ));
+    const updatedNum = updatedCars.reduce((acc, val) => acc + val.modifiedCount, 0);
+    return updatedNum;
   }
   async deleteCar(vin) {
     const res = await Car.deleteOne({ vin });
-    // что тут вернуть ??
     return res.deletedCount;
   }
 }

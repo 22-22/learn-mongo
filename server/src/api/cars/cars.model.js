@@ -49,4 +49,20 @@ const carSchema = new Schema({
   finishMileage: Number,
 });
 
+carSchema.static('returnReservedCarsWithUnauthDriverCard', (car) => {
+  if (car) {
+    const { vin, location, currentRun } = car;
+    const driverFirstName = currentRun.driver.firstName;
+    const driverLastName = currentRun.driver.lastName;
+    const licenseNumber = currentRun.driver.licenseNumber;
+    return {
+      vin,
+      location,
+      driverFirstName,
+      driverLastName,
+      licenseNumber
+    }
+  }
+});
+
 module.exports = model("Car", carSchema);

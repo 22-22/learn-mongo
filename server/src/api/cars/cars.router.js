@@ -3,8 +3,11 @@ const CarController = require("./cars.controller");
 
 const router = express.Router();
 
+// router.get("/cars/:id", CarController.getAllCars);
 router.get("/cars", CarController.getAllCars);
-router.get("/car", CarController.getCars);
+
+router.get("/carsInUse", CarController.getCarsInUseByFuel);
+router.get("/carsReserved", CarController.getReservedCarsWithUnauthDriverCard);
 
 router.post("/cars", CarController.addCar);
 

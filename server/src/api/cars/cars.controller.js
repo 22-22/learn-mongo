@@ -1,32 +1,34 @@
-const Car = require("./cars.model");
 const CarService = require("./cars.service");
 class CarController {
-  // добавить next и обработку ошибок
-  // async getAllCars(req, res, next) {
-  async getAllCars(req, res) {
+  async getAllCars(req, res, next) {
     try {
-      const cars = await CarService.getAllCars();;
+      const cars = await CarService.getAllCars();
+      // http://localhost:3000/api/cars/1?fuel=22
+      // console.log(`hi params ${req.params.id}`);
+      // console.log(`hi query ${req.query.fuel}`);
       res.json(cars);
-      // next();
     } catch (err) {
-      console.log(err);
+      // выдает html c ошибкой
+      next(err);
     }
   }
-  async getCars(req, res) {
+  async getCarsInUseByFuel(req, res, next) {
     try {
-      const { fuelLevel } = req.query;
-      if (fuelLevel) {
-        const cars = await CarService.getCarsInUseByFuel(fuelLevel);
-        res.json(cars);
-      } else {
-        const cars = await CarService.getReservedCarsWithUnauthDriverCard();
-        res.json(cars);
-      }
+      const cars = await CarService.getCarsInUseByFuel();
+      res.json(cars);
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   }
-  async addCar(req, res) {
+  async getReservedCarsWithUnauthDriverCard(req, res, next) {
+    try {
+      const cars = await CarService.getReservedCarsWithUnauthDriverCard();
+      res.json(cars);
+    } catch (err) {
+      next(err);
+    }
+  }
+  async addCar(req, res, next) {
     try {
       const {
         vin,
@@ -40,7 +42,8 @@ class CarController {
         finishFuelLevel,
         finishMileage,
       } = req.body;
-      // const carInstance = new Car({
+      // const carInstance = new Car({ 
+      // вроде если MyModel.create(car), то просто создаем объект.
       const carInstance = {
         vin,
         registrNumber,
@@ -77,33 +80,32 @@ class CarController {
       const car = await CarService.addCar(carInstance);
       res.json(car);
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   }
-  async updateCarStatus(req, res) {
+  async updateCarStatus(req, res, next) {
     try {
       const carsUpdated = await CarService.updateCarStatus();
       res.json(carsUpdated);
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   }
-  async updateCarCoordinates(req, res) {
+  async updateCarCoordinates(req, res, next) {
     try {
       const carsUpdated = await CarService.updateCarCoordinates();
-      console.log(carsUpdated);
       res.json(carsUpdated);
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   }
-  async deleteCar(req, res) {
+  async deleteCar(req, res, next) {
     try {
       const { vin } = req.query;
       const result = await CarService.deleteCar(vin);
       res.json(result);
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   }
 }
