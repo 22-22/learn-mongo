@@ -13,9 +13,7 @@ const currentRunSchema = new Schema({
       validThrough: Date,
     },
   },
-},
-  //  {_id: false}
-);
+});
 
 const carSchema = new Schema({
   vin: String,
@@ -28,7 +26,8 @@ const carSchema = new Schema({
       Statuses.inService,
       Statuses.inUse,
       Statuses.reserved,
-      Statuses.unavailable]
+      Statuses.unavailable,
+    ],
   },
   fuelLevel: Number,
   mileage: Number,
@@ -38,18 +37,18 @@ const carSchema = new Schema({
   location: {
     type: {
       type: String,
-      enum: ["Point"]
+      enum: ["Point"],
     },
     coordinates: {
-      type: [Number]
-    }
+      type: [Number],
+    },
   },
   bookingsHistory: [currentRunSchema],
   finishFuelLevel: Number,
   finishMileage: Number,
 });
 
-carSchema.static('returnReservedCarsWithUnauthDriverCard', (car) => {
+carSchema.static("returnReservedCarsWithUnauthDriverCard", (car) => {
   if (car) {
     const { vin, location, currentRun } = car;
     const driverFirstName = currentRun.driver.firstName;
@@ -60,8 +59,8 @@ carSchema.static('returnReservedCarsWithUnauthDriverCard', (car) => {
       location,
       driverFirstName,
       driverLastName,
-      licenseNumber
-    }
+      licenseNumber,
+    };
   }
 });
 
